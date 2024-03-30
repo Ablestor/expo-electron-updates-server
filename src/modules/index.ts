@@ -4,6 +4,7 @@ export * from './bundle';
 export * from './config';
 export * from './db';
 export * from './electron';
+export * from './expo';
 export * from './modules';
 // @endindex
 

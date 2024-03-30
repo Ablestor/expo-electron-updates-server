@@ -1,3 +1,3 @@
 // @index(['./*', '!./index.ts', '!./*.(spec|test).ts'], f => `export * from '${f.path}';`)
-export * from './sequelize';
-export * from './types';
+export * from './common.dto';
+export * from './expo.dto';

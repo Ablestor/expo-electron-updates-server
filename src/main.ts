@@ -49,6 +49,7 @@ async function bootstrap() {
       'refreshJWT',
     )
     .addTag('electron', 'electron apis')
+    .addTag('expo', 'expo update apis')
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
 

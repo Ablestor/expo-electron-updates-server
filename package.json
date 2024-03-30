@@ -40,10 +40,12 @@
     "rxjs": "^7.8.1",
     "sequelize": "6.28.0",
     "sequelize-typescript": "2.1.5",
+    "structured-headers": "^0.5.0",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
+    "@expo/config": "^7.0.3",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
