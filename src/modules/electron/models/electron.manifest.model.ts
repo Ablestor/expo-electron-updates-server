@@ -14,6 +14,9 @@ export class ElectronManifest
 {
   @Column
   platform: ElectronPlatform;
+
+  @Column
+  channel: string;
 }
 
 interface IElectronManifest {
