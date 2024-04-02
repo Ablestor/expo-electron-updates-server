@@ -18,20 +18,19 @@ export class GithubService implements OnApplicationBootstrap {
     });
   }
 
-  async getReleaseAssets(version: string, platform: string) {
+  async getReleaseAssets(tag: string) {
     const {
       data: { assets },
     } = await this.octokit.request('GET /repos/{owner}/{repo}/releases/tags/{tag}', {
       owner: this.config.get('GIT_OWNER'),
       repo: this.config.get('GIT_REPOSITORY'),
-      tag: `v${version}`,
+      tag,
     });
 
-    const selectedManifestAsset = assets.find(asset => asset.name.includes(platform));
-    if (!selectedManifestAsset)
-      throw new NotFoundException(`Cannot Find Asset of platform ${platform}`);
+    const selectedManifestAsset = assets.find(asset => asset.name.includes('.zip'));
+    if (!selectedManifestAsset) throw new NotFoundException(`Cannot Find Asset`);
 
-    const { headers } = await this.octokit.request(
+    const asset = await this.octokit.request(
       'GET /repos/{owner}/{repo}/releases/assets/{asset_id}',
       {
         owner: this.config.get('GIT_OWNER'),
@@ -43,9 +42,9 @@ export class GithubService implements OnApplicationBootstrap {
       },
     );
 
-    if (!headers.location) throw new InternalServerErrorException('Unknown error');
+    if (!asset.url) throw new InternalServerErrorException('Unknown error');
 
-    return headers.location;
+    return asset.url;
   }
 
   async existRelease(tag: string) {
@@ -55,7 +54,7 @@ export class GithubService implements OnApplicationBootstrap {
         {
           owner: this.config.get('GIT_OWNER'),
           repo: this.config.get('GIT_REPOSITORY'),
-          tag: `v${tag}`,
+          tag,
         },
       );
       if (!release) return false;

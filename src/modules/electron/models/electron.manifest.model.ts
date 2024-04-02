@@ -16,11 +16,12 @@ export class ElectronManifest
   platform: ElectronPlatform;
 
   @Column
-  channel: string;
+  releaseName: string;
 }
 
 interface IElectronManifest {
   platform: ElectronPlatform;
+  releaseName: string;
 }
 
 interface BundleManifestAttributes extends Omit<IElectronManifest, ''> {}

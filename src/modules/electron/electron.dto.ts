@@ -23,5 +23,36 @@ export class CreateManifestBody {
   })
   @IsString()
   @IsNotEmpty()
+  githubReleaseName: string;
+
+  @ApiProperty({
+    example: 'dev',
+  })
+  @IsString()
+  @IsNotEmpty()
   releaseName: string;
+}
+
+export class CheckManifestQuery {
+  @ApiProperty({
+    enum: ElectronPlatform,
+    example: '.dmg',
+  })
+  @IsEnum(ElectronPlatform)
+  @IsNotEmpty()
+  platform: ElectronPlatform;
+
+  @ApiProperty({
+    example: '0.1.0',
+  })
+  @IsString()
+  @IsNotEmpty()
+  version: string;
+
+  @ApiProperty({
+    example: 'foo-production',
+  })
+  @IsString()
+  @IsNotEmpty()
+  githubReleaseName: string;
 }
