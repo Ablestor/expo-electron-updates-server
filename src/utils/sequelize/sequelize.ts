@@ -32,7 +32,7 @@ export abstract class BaseManifestModel<
     description: 'manifest releaseName',
   })
   @Column
-  releaseName: string;
+  githubReleaseName: string;
 
   readonly createdAt: Date;
   readonly updatedAt: Date;
@@ -47,7 +47,7 @@ interface IBaseManifest {
 
   uuid: string;
   version: string;
-  releaseName: string;
+  githubReleaseName: string;
 }
 
 export const isModelClass = <T>(m: T): m is Include<T, ModelStatic<Model<any, any>>> =>

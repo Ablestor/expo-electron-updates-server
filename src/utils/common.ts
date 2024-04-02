@@ -19,7 +19,7 @@ export class ManifestQueryDto<T> {
 
   @ApiProperty({
     description: 'releaseName',
-    example: 'foo-production',
+    example: 'dev',
     required: false,
   })
   @IsOptional()

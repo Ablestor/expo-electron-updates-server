@@ -20,7 +20,7 @@ export class BundleService {
 
   async createBundle(bundleFiles: Express.Multer.File[], bundleData: CreateBundleBody) {
     try {
-      const { releaseName, version } = bundleData;
+      const { githubReleaseName, version } = bundleData;
 
       const metadata = bundleData.getMetadata();
 
@@ -32,7 +32,7 @@ export class BundleService {
       const commonBundleManifest = {
         uuid: hex2UUID(createHash(Buffer.from(JSON.stringify(metadata)), 'sha256', 'hex')),
 
-        releaseName,
+        githubReleaseName,
         version,
         bundler: metadata.bundler,
       };

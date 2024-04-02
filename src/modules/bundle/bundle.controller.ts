@@ -38,13 +38,13 @@ export class BundleController {
   @Header('Expires', '0')
   @Get('manifests/release/:releaseName/latest')
   async getLatestBundleManifestByReleaseName(
-    @Param('releaseName') releaseName: string,
+    @Param('githubReleaseName') githubReleaseName: string,
     @Query() query: BundleManifestFindQuery,
   ) {
     const { where } = query.toFindOptions();
     const manifest = await this.bundleManifestRepo.findOne({
       where: {
-        releaseName,
+        githubReleaseName,
         ...where,
       },
       include: [
@@ -52,7 +52,7 @@ export class BundleController {
         { association: BundleManifest.associations.typeIndexJson },
       ],
       order: [['createdAt', 'desc']],
-      rejectOnEmpty: new NotFoundException(`Not Found bundle manifest(${releaseName})`),
+      rejectOnEmpty: new NotFoundException(`Not Found bundle manifest(${githubReleaseName})`),
     });
 
     const host = `${this.config.get('HOSTNAME')}/api/bundle/assets`;

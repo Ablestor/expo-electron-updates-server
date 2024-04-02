@@ -8,7 +8,7 @@ export class CreateBundleBody {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  releaseName: string;
+  githubReleaseName: string;
 
   @ApiProperty()
   @IsString()
