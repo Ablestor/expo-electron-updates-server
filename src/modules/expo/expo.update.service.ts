@@ -373,7 +373,7 @@ export class ExpoUpdateService {
     if (!file) throw new BadRequestException(`Asset "${uuid}" not found in uploaded files.`);
 
     const hash = this.getAssetHash(file);
-    const contentType = mime.getType(ext) ?? file.mimetype ?? 'application/octet-stream';
+    const contentType = mime.lookup(ext) ?? file.mimetype ?? 'application/octet-stream';
 
     return { uuid: hex2UUID(uuid), platform, type: ExpoAssetType.Asset, ext, hash, contentType };
   }
