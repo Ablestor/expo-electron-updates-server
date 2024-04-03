@@ -1,5 +1,5 @@
 export enum ElectronPlatform {
-  EXE = '.exe',
-  DMG = 'x64.dmg',
-  DMG_ARM = 'arm64.dmg',
+  WIN = '.nupkg',
+  X64 = 'x64.zip',
+  ARM = 'arm64.zip',
 }

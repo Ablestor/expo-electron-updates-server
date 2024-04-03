@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Octokit } from 'octokit';
+import { ElectronPlatform } from '../electron.types';
 
 @Injectable()
 export class GithubService implements OnApplicationBootstrap {
@@ -18,7 +19,7 @@ export class GithubService implements OnApplicationBootstrap {
     });
   }
 
-  async getReleaseAssets(tag: string) {
+  async getReleaseAssets(tag: string, platform: ElectronPlatform) {
     const {
       data: { assets },
     } = await this.octokit.request('GET /repos/{owner}/{repo}/releases/tags/{tag}', {
@@ -27,7 +28,7 @@ export class GithubService implements OnApplicationBootstrap {
       tag,
     });
 
-    const selectedManifestAsset = assets.find(asset => asset.name.includes('.zip'));
+    const selectedManifestAsset = assets.find(asset => asset.name.includes(platform));
     if (!selectedManifestAsset) throw new NotFoundException(`Cannot Find Asset`);
 
     const asset = await this.octokit.request(

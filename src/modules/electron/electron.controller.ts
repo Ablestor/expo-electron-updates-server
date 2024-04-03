@@ -45,6 +45,7 @@ export class ElectronController {
 
     const downloadUrl = await this.githubService.getReleaseAssets(
       electronManifest?.githubReleaseName as string,
+      electronManifest.platform,
     );
 
     res.setHeader('Location', downloadUrl);

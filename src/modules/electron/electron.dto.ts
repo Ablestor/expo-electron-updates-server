@@ -5,7 +5,7 @@ import { ElectronPlatform } from './electron.types';
 export class CreateManifestBody {
   @ApiProperty({
     enum: ElectronPlatform,
-    example: '.dmg',
+    example: '.nupkg',
   })
   @IsEnum(ElectronPlatform)
   @IsNotEmpty()
@@ -36,7 +36,7 @@ export class CreateManifestBody {
 export class CheckManifestQuery {
   @ApiProperty({
     enum: ElectronPlatform,
-    example: '.dmg',
+    example: '.nupkg',
   })
   @IsEnum(ElectronPlatform)
   @IsNotEmpty()

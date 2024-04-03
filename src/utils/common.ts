@@ -4,7 +4,7 @@ import { IsOptional } from 'class-validator';
 export class ManifestQueryDto<T> {
   @ApiProperty({
     description: 'platform',
-    example: '.dmg',
+    example: '.nupkg',
     type: 'string',
   })
   @IsOptional()
