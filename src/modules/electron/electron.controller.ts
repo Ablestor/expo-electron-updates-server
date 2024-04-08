@@ -2,7 +2,11 @@ import { Body, Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ManifestQueryDto } from '@util/common';
 import { Response } from 'express';
-import { CheckManifestQuery, CreateManifestBody } from './electron.dto';
+import {
+  CheckManifestQuery,
+  CreateManifestBody,
+  LatestManifestDownloadQuery,
+} from './electron.dto';
 import { ElectronService } from './electron.service';
 import { ElectronPlatform } from './electron.types';
 import { GithubService } from './github';
@@ -72,18 +76,22 @@ export class ElectronController {
   }
 
   @ApiOperation({
-    summary: 'test',
+    summary: '최신 릴리즈 설치파일 다운로드',
   })
-  @Get('manifests/release/test/:platform')
-  async test(@Param('platform') platform: ElectronPlatform, @Res() res: Response) {
-    const electronManifest = await this.electronService.getManifestByPlatform(platform);
+  @Get('manifests/latest/release/download')
+  async test(@Query() query: LatestManifestDownloadQuery, @Res() res: Response) {
+    const electronManifest = await this.electronService.getLatestManifestByPlatform(query);
+
+    if (!electronManifest?.githubReleaseName || !electronManifest?.platform) {
+      return res.status(404).send();
+    }
 
     const downloadUrl = await this.githubService.getReleaseAssets(
       electronManifest?.githubReleaseName as string,
-      platform,
+      electronManifest?.platform as ElectronPlatform,
     );
 
-    res.setHeader('Location', downloadUrl);
+    res.header('Location', downloadUrl);
     res.status(302).send();
   }
 }

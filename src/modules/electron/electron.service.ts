@@ -3,7 +3,12 @@ import { InjectModel } from '@nestjs/sequelize';
 import { ManifestQueryDto } from '@util/common';
 import { createHash } from '@util/crypto';
 import { hex2UUID } from '@util/uuid';
-import { CheckManifestQuery, CreateManifestBody } from './electron.dto';
+import { Op } from 'sequelize';
+import {
+  CheckManifestQuery,
+  CreateManifestBody,
+  LatestManifestDownloadQuery,
+} from './electron.dto';
 import { ElectronPlatform } from './electron.types';
 import { GithubService } from './github';
 import { ElectronManifest } from './models';
@@ -77,11 +82,13 @@ export class ElectronService {
     return latestManifest?.githubReleaseName === githubReleaseName ? true : false;
   }
 
-  async getManifestByPlatform(platform: string) {
+  async getLatestManifestByPlatform(query: LatestManifestDownloadQuery) {
     return this.electronManifestRepo.findOne({
       where: {
-        platform,
+        githubReleaseName: { [Op.like]: `%${query.githubReleaseName}%` },
+        platform: query.platform,
       },
+      order: [['createdAt', 'desc']],
     });
   }
 }

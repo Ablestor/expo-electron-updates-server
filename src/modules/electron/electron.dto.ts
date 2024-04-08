@@ -56,3 +56,18 @@ export class CheckManifestQuery {
   @IsNotEmpty()
   githubReleaseName: string;
 }
+
+export class LatestManifestDownloadQuery {
+  @ApiProperty({
+    enum: ElectronPlatform,
+    example: '.exe',
+  })
+  @IsEnum(ElectronPlatform)
+  platform: ElectronPlatform;
+
+  @ApiProperty({
+    example: '@desktop/public',
+  })
+  @IsString()
+  githubReleaseName: string;
+}
