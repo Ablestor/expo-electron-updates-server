@@ -83,7 +83,7 @@ export class ElectronService {
   }
 
   async getLatestManifestByPlatform(query: LatestManifestDownloadQuery) {
-    return this.electronManifestRepo.findOne({
+    return await this.electronManifestRepo.findOne({
       where: {
         githubReleaseName: { [Op.like]: `%${query.githubReleaseName}%` },
         platform: query.platform,
