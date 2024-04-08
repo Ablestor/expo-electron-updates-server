@@ -70,4 +70,20 @@ export class ElectronController {
   ) {
     return this.electronService.checkLatestManifest(releaseName, query);
   }
+
+  @ApiOperation({
+    summary: 'test',
+  })
+  @Get('manifests/release/test/:platform')
+  async test(@Param('platform') platform: ElectronPlatform, @Res() res: Response) {
+    const electronManifest = await this.electronService.getManifestByPlatform(platform);
+
+    const downloadUrl = await this.githubService.getReleaseAssets(
+      electronManifest?.githubReleaseName as string,
+      platform,
+    );
+
+    res.setHeader('Location', downloadUrl);
+    res.status(302).send();
+  }
 }

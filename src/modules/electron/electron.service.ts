@@ -76,4 +76,12 @@ export class ElectronService {
 
     return latestManifest?.githubReleaseName === githubReleaseName ? true : false;
   }
+
+  async getManifestByPlatform(platform: string) {
+    return this.electronManifestRepo.findOne({
+      where: {
+        platform,
+      },
+    });
+  }
 }
