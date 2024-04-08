@@ -37,9 +37,21 @@ export class ElectronController {
   }
 
   @ApiOperation({
-    summary: 'github release asset 다운로드',
+    summary: 'check latest manifest',
   })
-  @Get('manifests/:manifestId/release/asset')
+  @Get('manifests/release/:releaseName/latest/check')
+  async checkLatestManifest(
+    @Query() query: CheckManifestQuery,
+    @Param('releaseName') releaseName: string,
+  ) {
+    return this.electronService.checkLatestManifest(releaseName, query);
+  }
+
+  @ApiOperation({
+    summary: 'manifest asset download',
+    description: 'manifest id에 해당하는 manifest asset을 다운로드함.',
+  })
+  @Get('manifests/:manifestId/asset')
   async getManifest(@Param('manifestId') manifestId: number, @Res() res: Response) {
     const electronManifest = await this.electronService.getElectronManifestById(manifestId);
 
@@ -65,21 +77,10 @@ export class ElectronController {
   }
 
   @ApiOperation({
-    summary: 'check latest manifest',
+    summary: 'get latest manifest installer',
   })
-  @Get('manifests/release/:releaseName/check/latest')
-  async checkLatestManifest(
-    @Query() query: CheckManifestQuery,
-    @Param('releaseName') releaseName: string,
-  ) {
-    return this.electronService.checkLatestManifest(releaseName, query);
-  }
-
-  @ApiOperation({
-    summary: '최신 릴리즈 설치파일 다운로드',
-  })
-  @Get('manifests/latest/release/download')
-  async test(@Query() query: LatestManifestDownloadQuery, @Res() res: Response) {
+  @Get('manifests/latest/download')
+  async getLatestInstaller(@Query() query: LatestManifestDownloadQuery, @Res() res: Response) {
     const electronManifest = await this.electronService.getLatestManifestByPlatform(query);
 
     if (!electronManifest?.githubReleaseName || !electronManifest?.platform) {
