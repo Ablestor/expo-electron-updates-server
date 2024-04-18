@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ElectronPlatform } from './electron.types';
 
 export class CreateManifestBody {
@@ -31,6 +31,13 @@ export class CreateManifestBody {
   @IsString()
   @IsNotEmpty()
   releaseName: string;
+
+  @ApiProperty({
+    example: 'asldfjwijflkajlfskndalkjf78452234jsd08uf9asjdf',
+  })
+  @IsString()
+  @IsOptional()
+  hash?: string;
 }
 
 export class CheckManifestQuery {

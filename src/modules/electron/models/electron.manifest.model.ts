@@ -17,11 +17,15 @@ export class ElectronManifest
 
   @Column
   releaseName: string;
+
+  @Column
+  hash?: string;
 }
 
 interface IElectronManifest {
   platform: ElectronPlatform;
   releaseName: string;
+  hash?: string;
 }
 
 interface BundleManifestAttributes extends Omit<IElectronManifest, ''> {}

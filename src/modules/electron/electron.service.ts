@@ -49,7 +49,13 @@ export class ElectronService {
     });
   }
 
-  async createManifest({ version, githubReleaseName, platform, releaseName }: CreateManifestBody) {
+  async createManifest({
+    version,
+    githubReleaseName,
+    platform,
+    releaseName,
+    hash,
+  }: CreateManifestBody) {
     const isExist = await this.githubService.existRelease(githubReleaseName);
     if (!isExist) throw new BadRequestException('Cannot create a release which does not exist');
 
@@ -60,6 +66,7 @@ export class ElectronService {
         githubReleaseName,
         platform,
         releaseName,
+        hash,
       },
     });
 
