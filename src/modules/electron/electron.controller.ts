@@ -1,4 +1,16 @@
-import { Body, Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  Query,
+  Res,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ManifestQueryDto } from '@util/common';
 import { Response } from 'express';
@@ -49,31 +61,33 @@ export class ElectronController {
 
   @ApiOperation({
     summary: 'manifest asset download',
-    description: 'manifest id에 해당하는 manifest asset을 다운로드함.',
+    description: 'manifest id에 해당하는 manifest를 다운로드함.',
   })
-  @Get('manifests/:manifestId/asset')
+  @Get('manifests/:manifestId')
   async getManifest(@Param('manifestId') manifestId: number, @Res() res: Response) {
     const electronManifest = await this.electronService.getElectronManifestById(manifestId);
 
-    if (!electronManifest?.githubReleaseName) {
-      return res.status(404).send();
+    if (!electronManifest) {
+      throw new NotFoundException('Not Found Manifest.');
     }
 
-    const downloadUrl = await this.githubService.getReleaseAssets(
-      electronManifest?.githubReleaseName as string,
-      electronManifest.platform,
-    );
+    const downloadUrl = await this.electronService.downloadElectronManifest(electronManifest);
 
-    res.setHeader('Location', downloadUrl);
-    res.status(302).send();
+    console.log(downloadUrl);
+
+    res.redirect(downloadUrl);
   }
 
   @ApiOperation({
     summary: 'create electron manifest',
   })
   @Post('manifests')
-  async createManifest(@Body() createBody: CreateManifestBody) {
-    return this.electronService.createManifest(createBody);
+  @UseInterceptors(FileInterceptor('file'))
+  async createManifest(
+    @Body() createBody: CreateManifestBody,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.electronService.createManifest(createBody, file);
   }
 
   @ApiOperation({
@@ -83,16 +97,8 @@ export class ElectronController {
   async getLatestInstaller(@Query() query: LatestManifestDownloadQuery, @Res() res: Response) {
     const electronManifest = await this.electronService.getLatestManifestByPlatform(query);
 
-    if (!electronManifest?.githubReleaseName || !electronManifest?.platform) {
+    if (!electronManifest?.platform) {
       return res.status(404).send();
     }
-
-    const downloadUrl = await this.githubService.getReleaseAssets(
-      electronManifest?.githubReleaseName as string,
-      electronManifest?.platform as ElectronPlatform,
-    );
-
-    res.header('Location', downloadUrl);
-    res.status(302).send();
   }
 }
