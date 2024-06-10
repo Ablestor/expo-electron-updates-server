@@ -73,8 +73,6 @@ export class ElectronController {
 
     const downloadUrl = await this.electronService.downloadElectronManifest(electronManifest);
 
-    console.log(downloadUrl);
-
     res.redirect(downloadUrl);
   }
 
