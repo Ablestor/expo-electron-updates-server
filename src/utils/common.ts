@@ -11,13 +11,6 @@ export class ManifestQueryDto<T> {
   platform: T;
 
   @ApiProperty({
-    description: 'version',
-    example: '0.1.9',
-  })
-  @IsOptional()
-  version?: string;
-
-  @ApiProperty({
     description: 'releaseName',
     example: 'dev',
     required: false,

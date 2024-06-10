@@ -29,17 +29,12 @@ export class ElectronService {
     return hex2UUID(createHash(updateMetadataBuffer, 'sha256', 'hex'));
   }
 
-  async getElectronManifest({
-    version,
-    platform,
-    releaseName,
-  }: ManifestQueryDto<ElectronPlatform>) {
+  async getElectronManifest({ platform, releaseName }: ManifestQueryDto<ElectronPlatform>) {
     return this.electronManifestRepo.findOne({
-      where: { platform, releaseName, ...(version ? { version } : {}) },
+      where: { platform, releaseName },
       order: [['createdAt', 'desc']],
       rejectOnEmpty: new NotFoundException({
-        message: `Cannot Find Manifest of version ${version}`,
-        detail: { version },
+        message: `Cannot Find Manifest`,
       }),
     });
   }
@@ -95,7 +90,7 @@ export class ElectronService {
     }
   }
 
-  async checkLatestManifest(releaseName: string, { version, platform, uuid }: CheckManifestQuery) {
+  async checkLatestManifest(releaseName: string, { version, platform }: CheckManifestQuery) {
     const latestManifest = await this.electronManifestRepo.findOne({
       where: {
         version,
@@ -105,16 +100,34 @@ export class ElectronService {
       order: [['createdAt', 'desc']],
     });
 
-    return latestManifest?.uuid === uuid ? true : false;
+    if (!latestManifest) {
+      throw new NotFoundException('Not Found Manifest');
+    }
+
+    return latestManifest.version === version ? true : false;
   }
 
   async getLatestManifestByPlatform(query: LatestManifestDownloadQuery) {
-    return this.electronManifestRepo.findOne({
+    const electronManifest = await this.electronManifestRepo.findOne({
       where: {
         platform: query.platform,
       },
       order: [['createdAt', 'desc']],
     });
+
+    if (!electronManifest) {
+      throw new NotFoundException('Not Found Manifest.');
+    }
+
+    if (electronManifest.platform === ElectronPlatform.DOWNWIN) {
+      return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/public-mommoss-${
+        electronManifest.version
+      }.Setup${electronManifest.platform}`;
+    } else {
+      return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/public-mommoss-${
+        electronManifest.version
+      }-${electronManifest.platform}`;
+    }
   }
 
   async downloadElectronManifest(electronManifest: ElectronManifest) {
@@ -122,10 +135,6 @@ export class ElectronService {
       return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/public-mommoss-${
         electronManifest.version
       }-full${electronManifest.platform}`;
-    } else if (electronManifest.platform === ElectronPlatform.DOWNWIN) {
-      return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/public-mommoss-${
-        electronManifest.version
-      }.Setup${electronManifest.platform}`;
     } else {
       return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/public-mommoss-${
         electronManifest.version
