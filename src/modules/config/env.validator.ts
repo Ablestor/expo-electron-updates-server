@@ -102,6 +102,9 @@ export class EnvironmentVariables {
 
   @IsNumber()
   FTP_PORT: number;
+
+  @IsString()
+  NAS_HOST: string;
 }
 
 export const validateConfig = createValidator(EnvironmentVariables, {

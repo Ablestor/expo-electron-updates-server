@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   Post,
   Query,
@@ -60,23 +61,21 @@ export class ElectronController {
 
   @ApiOperation({
     summary: 'manifest asset download',
-    description: 'manifest id에 해당하는 manifest asset을 다운로드함.',
+    description: 'manifest id에 해당하는 manifest를 다운로드함.',
   })
-  @Get('manifests/:manifestId/asset')
+  @Get('manifests/:manifestId')
   async getManifest(@Param('manifestId') manifestId: number, @Res() res: Response) {
     const electronManifest = await this.electronService.getElectronManifestById(manifestId);
 
-    // if (!electronManifest?.githubReleaseName) {
-    //   return res.status(404).send();
-    // }
+    if (!electronManifest) {
+      throw new NotFoundException('Not Found Manifest.');
+    }
 
-    // const downloadUrl = await this.githubService.getReleaseAssets(
-    //   electronManifest?.githubReleaseName as string,
-    //   electronManifest.platform,
-    // );
+    const downloadUrl = await this.electronService.downloadElectronManifest(electronManifest);
 
-    // res.setHeader('Location', downloadUrl);
-    res.status(302).send();
+    console.log(downloadUrl);
+
+    res.redirect(downloadUrl);
   }
 
   @ApiOperation({

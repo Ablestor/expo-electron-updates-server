@@ -117,5 +117,19 @@ export class ElectronService {
     });
   }
 
-  async downloadElectronManifest(electronManifest: ElectronManifest) {}
+  async downloadElectronManifest(electronManifest: ElectronManifest) {
+    if (electronManifest.platform === ElectronPlatform.WIN) {
+      return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/public-mommoss-${
+        electronManifest.version
+      }-full${electronManifest.platform}`;
+    } else if (electronManifest.platform === ElectronPlatform.DOWNWIN) {
+      return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/public-mommoss-${
+        electronManifest.version
+      }.Setup${electronManifest.platform}`;
+    } else {
+      return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/public-mommoss-${
+        electronManifest.version
+      }-${electronManifest.platform}`;
+    }
+  }
 }
