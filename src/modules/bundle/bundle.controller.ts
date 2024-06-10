@@ -44,7 +44,7 @@ export class BundleController {
     const { where } = query.toFindOptions();
     const manifest = await this.bundleManifestRepo.findOne({
       where: {
-        githubReleaseName,
+        // githubReleaseName,
         ...where,
       },
       include: [
