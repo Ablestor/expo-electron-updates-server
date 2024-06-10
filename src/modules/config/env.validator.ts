@@ -87,6 +87,21 @@ export class EnvironmentVariables {
 
   @IsString()
   GIT_REPOSITORY: string;
+
+  @IsString()
+  FTP_STORAGE_PATH: string;
+
+  @IsString()
+  FTP_HOST: string;
+
+  @IsString()
+  FTP_USER: string;
+
+  @IsString()
+  FTP_PASSWORD: string;
+
+  @IsNumber()
+  FTP_PORT: number;
 }
 
 export const validateConfig = createValidator(EnvironmentVariables, {

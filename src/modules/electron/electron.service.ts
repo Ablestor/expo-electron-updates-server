@@ -1,9 +1,11 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/sequelize';
 import { ManifestQueryDto } from '@util/common';
 import { createHash } from '@util/crypto';
 import { hex2UUID } from '@util/uuid';
-import { Op } from 'sequelize';
+import { Client } from 'basic-ftp';
+import { Readable } from 'stream';
 import {
   CheckManifestQuery,
   CreateManifestBody,
@@ -19,6 +21,7 @@ export class ElectronService {
     @InjectModel(ElectronManifest)
     private readonly electronManifestRepo: typeof ElectronManifest,
     private readonly githubService: GithubService,
+    private readonly config: ConfigService,
   ) {}
 
   private getManifestUuid(version: string) {
@@ -49,34 +52,50 @@ export class ElectronService {
     });
   }
 
-  async createManifest({
-    version,
-    githubReleaseName,
-    platform,
-    releaseName,
-    hash,
-  }: CreateManifestBody) {
-    const isExist = await this.githubService.existRelease(githubReleaseName);
-    if (!isExist) throw new BadRequestException('Cannot create a release which does not exist');
-
-    const [manifest] = await this.electronManifestRepo.findOrCreate({
+  async createManifest(
+    { platform, releaseName, version, hash }: CreateManifestBody,
+    file: Express.Multer.File,
+  ) {
+    const [createManifest] = await this.electronManifestRepo.findOrCreate({
       where: {
-        uuid: this.getManifestUuid(githubReleaseName),
-        version,
-        githubReleaseName,
         platform,
         releaseName,
+        version,
         hash,
+      },
+      defaults: {
+        platform,
+        releaseName,
+        version,
+        hash,
+        uuid: this.getManifestUuid(version),
       },
     });
 
-    return manifest;
+    const stream = Readable.from(file.buffer);
+
+    const client = new Client();
+    client.ftp.verbose = false;
+    try {
+      await client.access({
+        host: this.config.get('FTP_HOST'),
+        user: this.config.get('FTP_USER'),
+        password: this.config.get('FTP_PASSWORD'),
+        port: this.config.get('FTP_PORT'),
+        secure: true,
+        secureOptions: { rejectUnauthorized: false },
+      });
+      await client.cd(this.config.get('FTP_STORAGE_PATH'));
+      await client.ensureDir(`./${createManifest.uuid}`);
+      console.log(await client.pwd());
+      await client.uploadFrom(stream, `./${file.originalname}`);
+      client.close();
+    } catch (err) {
+      throw err;
+    }
   }
 
-  async checkLatestManifest(
-    releaseName: string,
-    { version, platform, githubReleaseName }: CheckManifestQuery,
-  ) {
+  async checkLatestManifest(releaseName: string, { version, platform, uuid }: CheckManifestQuery) {
     const latestManifest = await this.electronManifestRepo.findOne({
       where: {
         version,
@@ -86,16 +105,17 @@ export class ElectronService {
       order: [['createdAt', 'desc']],
     });
 
-    return latestManifest?.githubReleaseName === githubReleaseName ? true : false;
+    return latestManifest?.uuid === uuid ? true : false;
   }
 
   async getLatestManifestByPlatform(query: LatestManifestDownloadQuery) {
     return this.electronManifestRepo.findOne({
       where: {
-        githubReleaseName: { [Op.like]: `%${query.githubReleaseName}%` },
         platform: query.platform,
       },
       order: [['createdAt', 'desc']],
     });
   }
+
+  async downloadElectronManifest(electronManifest: ElectronManifest) {}
 }

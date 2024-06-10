@@ -19,13 +19,6 @@ export class CreateManifestBody {
   version: string;
 
   @ApiProperty({
-    example: 'foo-production',
-  })
-  @IsString()
-  @IsNotEmpty()
-  githubReleaseName: string;
-
-  @ApiProperty({
     example: 'dev',
   })
   @IsString()
@@ -57,11 +50,11 @@ export class CheckManifestQuery {
   version: string;
 
   @ApiProperty({
-    example: 'foo-production',
+    example: 'z©  ã }g§PÐ  ÿ?ñ',
   })
   @IsString()
   @IsNotEmpty()
-  githubReleaseName: string;
+  uuid: string;
 }
 
 export class LatestManifestDownloadQuery {
@@ -71,10 +64,4 @@ export class LatestManifestDownloadQuery {
   })
   @IsEnum(ElectronPlatform)
   platform: ElectronPlatform;
-
-  @ApiProperty({
-    example: '@desktop/public',
-  })
-  @IsString()
-  githubReleaseName: string;
 }
