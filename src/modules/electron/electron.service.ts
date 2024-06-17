@@ -57,12 +57,6 @@ export class ElectronService {
         releaseName,
         version,
         hash,
-      },
-      defaults: {
-        platform,
-        releaseName,
-        version,
-        hash,
         uuid: this.getManifestUuid(version),
       },
     });
@@ -82,7 +76,7 @@ export class ElectronService {
       });
       await client.cd(this.config.get('FTP_STORAGE_PATH'));
       await client.ensureDir(`./${createManifest.uuid}`);
-      console.log(await client.pwd());
+      await client.ensureDir(`./${createManifest.releaseName}`);
       await client.uploadFrom(stream, `./${file.originalname}`);
       client.close();
     } catch (err) {
@@ -120,25 +114,25 @@ export class ElectronService {
     }
 
     if (electronManifest.platform === ElectronPlatform.DOWNWIN) {
-      return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/public-mommoss-${
-        electronManifest.version
-      }.Setup${electronManifest.platform}`;
+      return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/${
+        electronManifest.releaseName
+      }/public-mommoss-${electronManifest.version}.Setup${electronManifest.platform}`;
     } else {
-      return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/public-mommoss-${
-        electronManifest.version
-      }-${electronManifest.platform}`;
+      return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/${
+        electronManifest.releaseName
+      }/public-mommoss-${electronManifest.version}-${electronManifest.platform}`;
     }
   }
 
   async downloadElectronManifest(electronManifest: ElectronManifest) {
     if (electronManifest.platform === ElectronPlatform.WIN) {
-      return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/public-mommoss-${
-        electronManifest.version
-      }-full${electronManifest.platform}`;
+      return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/${
+        electronManifest.releaseName
+      }/public-mommoss-${electronManifest.version}-full${electronManifest.platform}`;
     } else {
-      return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/public-mommoss-${
-        electronManifest.version
-      }-${electronManifest.platform}`;
+      return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/${
+        electronManifest.releaseName
+      }/public-mommoss-${electronManifest.version}-${electronManifest.platform}`;
     }
   }
 }
