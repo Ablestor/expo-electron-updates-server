@@ -48,13 +48,6 @@ export class CheckManifestQuery {
   @IsString()
   @IsNotEmpty()
   version: string;
-
-  @ApiProperty({
-    example: 'z©  ã }g§PÐ  ÿ?ñ',
-  })
-  @IsString()
-  @IsNotEmpty()
-  uuid: string;
 }
 
 export class LatestManifestDownloadQuery {

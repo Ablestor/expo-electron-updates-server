@@ -40,7 +40,6 @@ export class ElectronController {
     @Param('releaseName') releaseName: string,
   ) {
     const manifest = await this.electronService.getElectronManifest({
-      version: query.version,
       platform: query.platform,
       releaseName,
     });
@@ -93,10 +92,8 @@ export class ElectronController {
   })
   @Get('manifests/latest/download')
   async getLatestInstaller(@Query() query: LatestManifestDownloadQuery, @Res() res: Response) {
-    const electronManifest = await this.electronService.getLatestManifestByPlatform(query);
+    const downloadUrl = await this.electronService.getLatestManifestByPlatform(query);
 
-    if (!electronManifest?.platform) {
-      return res.status(404).send();
-    }
+    res.redirect(downloadUrl);
   }
 }
