@@ -116,7 +116,7 @@ export class ElectronService {
     if (electronManifest.platform === ElectronPlatform.DOWNWIN) {
       return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/${
         electronManifest.releaseName
-      }/public-mommoss-${electronManifest.version}.Setup${electronManifest.platform}`;
+      }/public-mommoss-${electronManifest.version} Setup${electronManifest.platform}`;
     } else {
       return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/${
         electronManifest.releaseName
