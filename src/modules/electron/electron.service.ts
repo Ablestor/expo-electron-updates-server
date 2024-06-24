@@ -130,9 +130,15 @@ export class ElectronService {
         electronManifest.releaseName
       }/public-mommoss-${electronManifest.version}-full${electronManifest.platform}`;
     } else {
-      return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/${
-        electronManifest.releaseName
-      }/public-mommoss-${electronManifest.version}-${electronManifest.platform}`;
+      if (electronManifest.platform === ElectronPlatform.X64) {
+        return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/${
+          electronManifest.releaseName
+        }/public-mommoss-darwin-x64-${electronManifest.version}.zip`;
+      } else {
+        return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/${
+          electronManifest.releaseName
+        }/public-mommoss-darwin-arm64-${electronManifest.version}.zip`;
+      }
     }
   }
 }
