@@ -134,11 +134,11 @@ export class ElectronService {
       if (electronManifest.platform === ElectronPlatform.X64) {
         return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/${
           electronManifest.releaseName
-        }/public-mommoss-darwin-x64-${electronManifest.version}.zip`;
+        }/맘모스-darwin-x64-${electronManifest.version}.zip`;
       } else {
         return `${this.config.get('NAS_HOST')}/${electronManifest.uuid}/${
           electronManifest.releaseName
-        }/public-mommoss-darwin-arm64-${electronManifest.version}.zip`;
+        }/맘모스-darwin-arm64-${electronManifest.version}.zip`;
       }
     }
   }
