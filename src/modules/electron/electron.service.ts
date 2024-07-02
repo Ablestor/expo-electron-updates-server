@@ -61,6 +61,7 @@ export class ElectronService {
       },
     });
 
+    file.originalname = Buffer.from(file.originalname, 'ascii').toString('utf-8');
     const stream = Readable.from(file.buffer);
 
     const client = new Client();
